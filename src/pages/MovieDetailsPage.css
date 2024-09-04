@@ -1,0 +1,10 @@
+#header {
+    filter: brightness(50%);
+    background-image: url('../../src/assets/searchbox-background.jpg');
+    background-position: center 0 -100px;
+    background-size: cover;
+}
+
+#heading {
+    filter: brightness(50%);
+}

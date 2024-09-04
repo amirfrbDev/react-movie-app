@@ -1,0 +1,7 @@
+#gooz {
+    filter: brightness(50%);
+    background-image:  url('../assets/searchbox-background.jpg');
+    /* background-image: url("");  */
+    background-position: center 0 -100px;
+    
+}
