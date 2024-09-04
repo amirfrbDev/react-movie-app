@@ -93,7 +93,7 @@ function MovieDetailsPage({ mediaType }) {
                           {data?.data?.average} is the average rating of this movie.
                         </div>
                       </p>
-                      <p className=''><a href={`https://imdb.com/title/${data?.data?.imdb_id}`} className='flex items-center gap-1 text-sm'><span className='text-yellow-300 transition-all hover:text-yellow-300/80'><FaImdb fontSize={30} /></span> <span className='transition-all hover:text-white/80'>IMDB</span></a></p>
+                      <p className=''><a target='_blank' href={`https://imdb.com/title/${data?.data?.imdb_id}`} className='flex items-center gap-1 text-sm'><span className='text-yellow-300 transition-all hover:text-yellow-300/80'><FaImdb fontSize={30} /></span> <span className='transition-all hover:text-white/80'>IMDB</span></a></p>
                     </div>
                     <div className='flex my-4 gap-3'>
                       <button className='flex items-center justify-center group relative bg-[#ff2450] rounded-full p-2 w-12 h-12 text-2xl transition-all hover:bg-red-700'>
@@ -258,14 +258,18 @@ function MovieDetailsPage({ mediaType }) {
           {
             mediaType === "movie" ? (
               <>
-                <div className='mt-5'>
-                  <p className='font-bold text-lg'>Budget:</p>
-                  <p className='text-sm mt-[3px]'>${data?.data?.budget?.toLocaleString()}</p>
-                </div>
-                <div className='mt-5'>
-                  <p className='font-bold text-lg'>Revenue:</p>
-                  <p className='text-sm mt-[3px]'>${data?.data?.revenue.toLocaleString()}</p>
-                </div>
+                {data?.data?.budget ? (
+                  <div className='mt-5'>
+                    <p className='font-bold text-lg'>Budget:</p>
+                    <p className='text-sm mt-[3px]'>${data?.data?.budget?.toLocaleString()}</p>
+                  </div>
+                ) : null}
+                {data?.data?.revenue ? (
+                  <div className='mt-5'>
+                    <p className='font-bold text-lg'>Revenue:</p>
+                    <p className='text-sm mt-[3px]'>${data?.data?.revenue.toLocaleString()}</p>
+                  </div>
+                ) : null}
               </>
             ) : (
               <>
@@ -280,22 +284,24 @@ function MovieDetailsPage({ mediaType }) {
               </>
             )
           }
-          <div className='mt-6'>
-            <p className='font-bold text-lg'>Keywords:</p>
-            <ul className='flex flex-wrap gap-2 mt-2'>
-              {
-                keywordsData?.data?.keywords ?
-                  keywordsData?.data?.keywords?.map(keyword =>
-                    <li key={keyword.id} className='text-sm  text-center p-[3px] rounded-[4px] bg-zinc-700 shadow-black shadow-2xl'>
-                      <a>{keyword.name}</a>
-                    </li>
-                  ) : keywordsData?.data?.results?.map(keyword =>
-                    <li key={keyword.id} className='text-sm  text-center p-[3px] rounded-[4px] bg-zinc-700 shadow-black shadow-2xl'>
-                      <a href='#'>{keyword.name}</a>
-                    </li>)
-              }
-            </ul>
-          </div>
+          {keywordsData?.data?.keywords?.length ? (
+            <div className='mt-6'>
+              <p className='font-bold text-lg'>Keywords:</p>
+              <ul className='flex flex-wrap gap-1 mt-2'>
+                {
+                  keywordsData?.data?.keywords ?
+                    keywordsData?.data?.keywords?.map(keyword =>
+                      <li key={keyword.id} className='text-sm  text-center p-[3px] rounded-[4px] bg-zinc-700 shadow-black shadow-2xl'>
+                        <a href='#'>{keyword.name}</a>
+                      </li>
+                    ) : keywordsData?.data?.results?.map(keyword =>
+                      <li key={keyword.id} className='text-sm  text-center p-[3px] rounded-[4px] bg-zinc-700 shadow-black shadow-2xl'>
+                        <a href='#'>{keyword.name}</a>
+                      </li>)
+                }
+              </ul>
+            </div>
+          ) : null}
         </div>
       </div>
 

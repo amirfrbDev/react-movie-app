@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { FaUser } from 'react-icons/fa';
+import { FaArrowRight, FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 function MovieCastSlider({ castData }) {
@@ -31,8 +31,8 @@ function MovieCastSlider({ castData }) {
                     </li>
                 ))
                 }
-                <li>
-                    <p>View more <span></span></p>
+                <li className='flex items-center flex-shrink-0 w-[170px] h-[300px] '>
+                    <Link className='h-fit flex items-center gap-1 hover:text-white/70'>View more <span><FaArrowRight /></span></Link>
                 </li>
             </ul>
         </div>
