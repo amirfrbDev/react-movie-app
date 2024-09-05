@@ -6,9 +6,9 @@ import MovieDetailsPage from '../pages/MovieDetailsPage'
 function Router() {
   return (
     <Routes>
-        <Route index element={<HomePage />} />
+        <Route index element={<HomePage />} />                                      
         <Route path="/movie/:id" element={<MovieDetailsPage mediaType="movie" />} />
-        <Route path="/tv/:id" element={<MovieDetailsPage mediaType="tv" />} />
+        <Route path="/tv/:id" element={<MovieDetailsPage mediaType="tv" />} />      
     </Routes>
   )
 }

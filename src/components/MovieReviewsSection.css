@@ -1,0 +1,7 @@
+#review_body p {
+    margin-bottom: 10px;
+}
+
+#review_body p:last-of-type {
+    display: inline;
+}

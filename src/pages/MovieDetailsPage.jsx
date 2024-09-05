@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./MovieDetailsPage.css";
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getMovieCastById, getMovieDetailsById, getMovieKeywordsById, getMovieSocialsById } from '../services/movie';
+import { getMovieCastById, getMovieDetailsById, getMovieKeywordsById, getMovieReviewsById, getMovieSocialsById } from '../services/movie';
 import { GoDotFill } from 'react-icons/go';
 import { FaUserGroup } from 'react-icons/fa6';
 import { FaBookmark, FaFacebook, FaImdb, FaInstagram, FaLink, FaStar, FaTwitter } from 'react-icons/fa';
@@ -10,13 +10,17 @@ import { IoListOutline } from 'react-icons/io5';
 import { IoMdHeart } from 'react-icons/io';
 import MovieCastSlider from '../components/MovieCastSlider';
 import SerieLastSeason from '../components/SerieLastSeason';
+import MovieReviewsSection from '../components/MovieReviewsSection';
 
 function MovieDetailsPage({ mediaType }) {
+
+  // const [reviews, setReviews] = useState(null)
+
   const { id } = useParams();
 
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["movie-details", id, mediaType],
-    queryFn: () => getMovieDetailsById(id, mediaType),
+    queryFn: getMovieDetailsById
   });
 
   const { data: castData } = useQuery({
@@ -34,14 +38,28 @@ function MovieDetailsPage({ mediaType }) {
     queryFn: getMovieKeywordsById
   })
 
+  // const { data: reviewsData } = useQuery({
+  //   queryKey: ["movie-reviews", id, mediaType],
+  //   queryFn: getMovieReviewsById,
+  //   onSuccess: (data) => {
+  //     console.log("Query succeeded with data:", data);
+  //   },
+  //   onError: (error) => {
+  //     console.error("Query failed with error:", error);
+  //   },
+  // });
 
+  // useEffect(() => {
+  //   setReviews(reviewsData)
+  // }, [reviewsData])
+
+
+  // console.log(reviewsData)
 
   if (isError) console.log(error);
 
   const backdropUrl = `https://media.themoviedb.org/t/p/w1920_and_h800_multi_faces${data?.data?.backdrop_path}`;
 
-  // console.log(keywordsData?.data?.keywords)
-  console.log(keywordsData?.data?.results)
 
   return (
     <>
@@ -72,9 +90,9 @@ function MovieDetailsPage({ mediaType }) {
                   <div>
                     <h1 className='text-4xl font-semibold'>{data?.data?.title} ({data?.data?.release_date?.split("-")[0]})</h1>
                     <div className='flex items-center text-lg mt-1 gap-3'>
-                      <p>{data?.data?.release_date.split("-").join("/")} ({data?.data?.origin_country.map((country, index) => <span>{index !== 0 ? ` & ${country}` : country}</span>)})</p>
+                      <p>{data?.data?.release_date.split("-").join("/")} ({data?.data?.origin_country.map((country, index) => <span key={index}>{index !== 0 ? ` & ${country}` : country}</span>)})</p>
                       <span className='text-sm'><GoDotFill /></span>
-                      <p>{data?.data?.genres.map((genre, index) => <span>{index !== data?.data?.genres?.length - 1 ? `${genre.name}, ` : genre.name}</span>)}</p>
+                      <p>{data?.data?.genres.map((genre, index) => <span key={genre.id}>{index !== data?.data?.genres?.length - 1 ? `${genre.name}, ` : genre.name}</span>)}</p>
                       <span className='text-sm'><GoDotFill /></span>
                       <p>{data?.data?.runtime > 59 && `${Math.floor(data?.data?.runtime / 60)}h`} {data?.data?.runtime % 60}m</p>
                     </div>
@@ -82,35 +100,42 @@ function MovieDetailsPage({ mediaType }) {
                       <p className='flex items-center gap-2 group relative'>
                         <FaUserGroup />
                         {data?.data?.vote_count?.toLocaleString()}
-                        <div class="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded py-2 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
+                        <div className="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded py-2 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
                           {data?.data?.vote_count?.toLocaleString()} votes
                         </div>
                       </p>
                       <p className='flex items-center gap-2 group relative'>
                         <FaStar />
                         {data?.data?.vote_average}
-                        <div class="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded py-2 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
+                        <div className="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded py-2 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
                           {data?.data?.average} is the average rating of this movie.
                         </div>
                       </p>
-                      <p className=''><a target='_blank' href={`https://imdb.com/title/${data?.data?.imdb_id}`} className='flex items-center gap-1 text-sm'><span className='text-yellow-300 transition-all hover:text-yellow-300/80'><FaImdb fontSize={30} /></span> <span className='transition-all hover:text-white/80'>IMDB</span></a></p>
+                      <p className=''>
+                        <a target='_blank' href={`https://imdb.com/title/${data?.data?.imdb_id}`} className='flex items-center gap-1 text-sm'>
+                          <span className='text-yellow-300 transition-all hover:text-yellow-300/80'>
+                            <FaImdb fontSize={30} />
+                          </span>
+                          <span className='transition-all hover:text-white/80'>IMDB</span>
+                        </a>
+                      </p>
                     </div>
                     <div className='flex my-4 gap-3'>
                       <button className='flex items-center justify-center group relative bg-[#ff2450] rounded-full p-2 w-12 h-12 text-2xl transition-all hover:bg-red-700'>
                         <IoListOutline />
-                        <div class="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded w-24 py-2 px-2 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
+                        <div className="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded w-24 py-2 px-2 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
                           Add To List
                         </div>
                       </button>
                       <button className='flex items-center justify-center group relative bg-[#ff2450] rounded-full p-2 w-12 h-12 text-2xl transition-all hover:bg-red-600'>
                         <IoMdHeart />
-                        <div class="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded w-32 py-2 px-2 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
+                        <div className="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded w-32 py-2 px-2 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
                           Mark As Favourite
                         </div>
                       </button>
                       <button className='flex items-center justify-center group relative bg-[#ff2450] rounded-full p-2 w-12 h-12 text-2xl transition-all hover:bg-red-600'>
                         <FaBookmark />
-                        <div class="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded w-40 py-2 px-2 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
+                        <div className="absolute hidden group-hover:block bg-gray-700 text-white text-sm rounded w-40 py-2 px-2 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
                           Add To Your Watchlist
                         </div>
                       </button>
@@ -201,8 +226,9 @@ function MovieDetailsPage({ mediaType }) {
       <div className='w-[96%] mx-auto grid grid-cols-[79%_19%] justify-between gap-4'>
         <div>
           <MovieCastSlider castData={castData} />
-          <hr className='my-14 mx-5 border-zinc-700' />
+          <hr className='mt-10 mb-14 mx-2 border-zinc-700' />
           {mediaType === "tv" && <SerieLastSeason data={data} />}
+          <MovieReviewsSection id={id} mediaType={mediaType} />
         </div>
         <div className='mt-[44px] p-4 rounded-lg shadow-2xl shadow-black bg-zinc-900'>
           <ul className="flex justify-between text-3xl gap-2 list-none">

@@ -15,7 +15,7 @@ function SearchBox() {
   const [abortController, setAbortController] = useState(null);
 
   const { isFetching, data, isError, error, refetch } = useQuery({
-    queryKey: ["searched-movies", debouncedInput], // Use debounced input in query key
+    queryKey: ["searched-movies", debouncedInput.toLowerCase().trim()], // Use debounced input in query key
     queryFn: async () => {
       const controller = new AbortController();
       setAbortController(controller);

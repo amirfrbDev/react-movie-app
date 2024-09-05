@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 
 function MovieCastSlider({ castData }) {
 
-    
+
     return (
         <div className='w-full rounded-lg '>
             <h2 className='text-xl font-bold mb-4'>Top Billed Cast</h2>
-            <ul className='flex overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400  gap-4 p-3 pl-2 shadow-inner shadow-black rounded-lg' id='chos'>
+            <ul className='flex overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400 h-fit  gap-4 p-3 pl-2 shadow-inner shadow-black rounded-lg' id='chos'>
                 {castData?.data?.cast?.slice(0, 10)?.map((actor) => (
                     <li key={actor.id} className='flex-shrink-0 w-[150px] h-[300px] rounded-lg shadow-xl shadow-black '>
                         <Link>
@@ -31,10 +31,13 @@ function MovieCastSlider({ castData }) {
                     </li>
                 ))
                 }
-                <li className='flex items-center flex-shrink-0 w-[170px] h-[300px] '>
+                <li className='flex items-center justify-center flex-shrink-0 w-[140px] h-[300px] '>
                     <Link className='h-fit flex items-center gap-1 hover:text-white/70'>View more <span><FaArrowRight /></span></Link>
                 </li>
             </ul>
+            <Link to="#" className='w-fit min-w-0 flex transition-all hover:text-white/70'>
+                <h2 className='text-lg mt-4 w-fit'>Full Cast & Crew</h2>
+            </Link>
         </div>
     );
 }
