@@ -30,6 +30,7 @@ function SearchBox() {
         }
       }
     },
+    retry:3,
     enabled: false,
   });
 

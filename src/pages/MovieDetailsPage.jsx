@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import "./MovieDetailsPage.css";
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getMovieCastById, getMovieDetailsById, getMovieKeywordsById, getMovieReviewsById, getMovieSocialsById } from '../services/movie';
+import { getMovieCastById, getMovieDetailsById, getMovieImagesById, getMovieKeywordsById, getMovieReviewsById, getMovieSocialsById } from '../services/movie';
 import { GoDotFill } from 'react-icons/go';
 import { FaUserGroup } from 'react-icons/fa6';
-import { FaBookmark, FaFacebook, FaImdb, FaInstagram, FaLink, FaStar, FaTwitter } from 'react-icons/fa';
+import { FaBookmark, FaFacebook, FaFilm, FaImdb, FaInstagram, FaLink, FaStar, FaTwitter } from 'react-icons/fa';
 import { IoListOutline } from 'react-icons/io5';
 import { IoMdHeart } from 'react-icons/io';
 import MovieCastSlider from '../components/MovieCastSlider';
 import SerieLastSeason from '../components/SerieLastSeason';
 import MovieReviewsSection from '../components/MovieReviewsSection';
+import MovieMediaSection from '../components/MovieMediaSection';
+import MovieSimilarSection from '../components/MovieSimilarSection';
+import MovieRecommendations from '../components/MovieRecommendations';
 
 function MovieDetailsPage({ mediaType }) {
 
   // const [reviews, setReviews] = useState(null)
 
   const { id } = useParams();
+
+  const location = useLocation()
 
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["movie-details", id, mediaType],
@@ -38,23 +43,10 @@ function MovieDetailsPage({ mediaType }) {
     queryFn: getMovieKeywordsById
   })
 
-  // const { data: reviewsData } = useQuery({
-  //   queryKey: ["movie-reviews", id, mediaType],
-  //   queryFn: getMovieReviewsById,
-  //   onSuccess: (data) => {
-  //     console.log("Query succeeded with data:", data);
-  //   },
-  //   onError: (error) => {
-  //     console.error("Query failed with error:", error);
-  //   },
-  // });
+  useEffect(() => {
+    window.scroll(0,0)
+  }, [location])
 
-  // useEffect(() => {
-  //   setReviews(reviewsData)
-  // }, [reviewsData])
-
-
-  // console.log(reviewsData)
 
   if (isError) console.log(error);
 
@@ -81,20 +73,61 @@ function MovieDetailsPage({ mediaType }) {
             {isPending && <h2>Loading...</h2>}
             {data?.data && (
               <>
-                <img
-                  src={`https://media.themoviedb.org/t/p/w300_and_h450_bestv2${data?.data?.poster_path}`}
-                  alt={data?.data.title}
-                  className='rounded-lg w-[300px] h-[450px]'
-                />
+                {
+                  data?.data?.poster_path ? (
+                    <img
+                      src={`https://media.themoviedb.org/t/p/w300_and_h450_bestv2${data?.data?.poster_path}`}
+                      alt={data?.data.title}
+                      className='rounded-lg w-[300px] h-[450px]'
+                    />
+                  ) : (
+                    <div className='bg-gray-700 rounded-lg flex items-center justify-center' style={{ minWidth: "300px", width: "300px", height: "450px" }}>
+                      <span><FaFilm fontSize={120} /></span>
+                    </div>
+                  )
+                }
                 <div className='ml-6'>
                   <div>
-                    <h1 className='text-4xl font-semibold'>{data?.data?.title} ({data?.data?.release_date?.split("-")[0]})</h1>
+                    <h1 className='text-4xl font-semibold'>
+                      {data?.data?.original_title} {data?.data?.first_air_date && `(${data?.data?.first_air_date?.split("-")[0]})`}
+                    </h1>
                     <div className='flex items-center text-lg mt-1 gap-3'>
-                      <p>{data?.data?.release_date.split("-").join("/")} ({data?.data?.origin_country.map((country, index) => <span key={index}>{index !== 0 ? ` & ${country}` : country}</span>)})</p>
-                      <span className='text-sm'><GoDotFill /></span>
-                      <p>{data?.data?.genres.map((genre, index) => <span key={genre.id}>{index !== data?.data?.genres?.length - 1 ? `${genre.name}, ` : genre.name}</span>)}</p>
-                      <span className='text-sm'><GoDotFill /></span>
-                      <p>{data?.data?.runtime > 59 && `${Math.floor(data?.data?.runtime / 60)}h`} {data?.data?.runtime % 60}m</p>
+                      <p>
+                        {data?.data?.release_date.split("-").join("/")}
+                        ({
+                          data?.data?.origin_country.map((country, index) =>
+                            <span key={index}>{index !== 0 ? ` & ${country}` : country}</span>
+                          )
+                        })
+                      </p>
+                      {
+                        data?.data?.genres?.length ? (
+                          <>
+                            <span className='text-sm'>
+                              <GoDotFill />
+                            </span>
+                            <p>
+                              {data?.data?.genres.map((genre, index) =>
+                                <span key={genre.id}>
+                                  {index !== data?.data?.genres?.length - 1 ? `${genre.name}, ` : genre.name}
+                                </span>
+                              )}
+                            </p>
+                          </>
+                        ) : null
+                      }
+                      {
+                        data?.data?.runtime ? (
+                          <>
+                            <span className='text-sm'>
+                              <GoDotFill />
+                            </span>
+                            <p>
+                              {data?.data?.runtime > 59 && `${Math.floor(data?.data?.runtime / 60)}h`} {data?.data?.runtime % 60}m
+                            </p>
+                          </>
+                        ) : null
+                      }
                     </div>
                     <div className='flex items-center text-lg mt-2 gap-4'>
                       <p className='flex items-center gap-2 group relative'>
@@ -111,14 +144,18 @@ function MovieDetailsPage({ mediaType }) {
                           {data?.data?.average} is the average rating of this movie.
                         </div>
                       </p>
-                      <p className=''>
-                        <a target='_blank' href={`https://imdb.com/title/${data?.data?.imdb_id}`} className='flex items-center gap-1 text-sm'>
-                          <span className='text-yellow-300 transition-all hover:text-yellow-300/80'>
-                            <FaImdb fontSize={30} />
-                          </span>
-                          <span className='transition-all hover:text-white/80'>IMDB</span>
-                        </a>
-                      </p>
+
+                      {data?.data?.imdb_id ? (
+                        <p className=''>
+                          <a target='_blank' href={`https://imdb.com/title/${data?.data?.imdb_id}`} className='flex items-center gap-1 text-sm'>
+                            <span className='text-yellow-300 transition-all hover:text-yellow-300/80'>
+                              <FaImdb fontSize={30} />
+                            </span>
+                            <span className='transition-all hover:text-white/80'>IMDB</span>
+                          </a>
+                        </p>
+                      ) : null
+                      }
                     </div>
                     <div className='flex my-4 gap-3'>
                       <button className='flex items-center justify-center group relative bg-[#ff2450] rounded-full p-2 w-12 h-12 text-2xl transition-all hover:bg-red-700'>
@@ -155,24 +192,49 @@ function MovieDetailsPage({ mediaType }) {
             {isPending && <h2>Loading...</h2>}
             {data?.data && (
               <>
-                <img
-                  src={`https://media.themoviedb.org/t/p/w300_and_h450_bestv2${data?.data?.poster_path}`}
-                  alt={data.data?.original_name}
-                  className='rounded-lg w-[250px] h-[400px]'
-                />
+                {
+                  data?.data?.poster_path ? (
+                    <img
+                      src={`https://media.themoviedb.org/t/p/w300_and_h450_bestv2${data?.data?.poster_path}`}
+                      alt={data.data?.original_name}
+                      className='rounded-lg w-[300px] h-[450px]'
+                    />
+                  ) : (
+                    <div className='bg-gray-700 rounded-lg flex items-center justify-center' style={{ minWidth: "300px", width: "300px", height: "450px" }}>
+                      <span><FaFilm fontSize={120} /></span>
+                    </div>
+                  )
+                }
                 <div className='ml-6'>
                   <div>
                     <h1 className='text-4xl font-semibold'>
-                      {data?.data?.original_name} ({data?.data?.first_air_date?.split("-")[0]})
+                      {data?.data?.original_name} {data?.data?.first_air_date && `(${data?.data?.first_air_date?.split("-")[0]})`}
                     </h1>
                     <div className='flex items-center text-lg mt-1 gap-3'>
-                      <p>
-                        {data?.data?.genres.map((genre, index) => (
-                          <span key={index}>{index !== data?.data?.genres?.length - 1 ? `${genre.name}, ` : genre.name}</span>
-                        ))}
-                      </p>
-                      <span><GoDotFill fontSize={20} /></span>
-                      <p>{data?.data?.number_of_seasons?.toLocaleString()} seasons, {data?.data?.number_of_episodes?.toLocaleString()} episodes</p>
+                      {
+                        data?.data?.genres?.length && (
+                          <>
+                            <p>
+                              {data?.data?.genres.map((genre, index) =>
+                                <span key={genre.id}>
+                                  {index !== data?.data?.genres?.length - 1 ? `${genre.name}, ` : genre.name}
+                                </span>
+                              )}
+                            </p>
+                          </>
+                        )
+                      }
+
+                      {
+                        data?.data?.number_of_seasons && data?.data?.number_of_episodes ? (
+                          <>
+                            <span><GoDotFill fontSize={20} /></span>
+                            <p>
+                              {data?.data?.number_of_seasons?.toLocaleString()} seasons, {data?.data?.number_of_episodes?.toLocaleString()} episodes
+                            </p>
+                          </>
+                        ) : null
+                      }
                     </div>
                     <div className='flex items-center text-lg mt-2 gap-4'>
                       <p className='flex items-center gap-2 group relative'>
@@ -227,8 +289,14 @@ function MovieDetailsPage({ mediaType }) {
         <div>
           <MovieCastSlider castData={castData} />
           <hr className='mt-10 mb-14 mx-2 border-zinc-700' />
-          {mediaType === "tv" && <SerieLastSeason data={data} />}
+          {mediaType === "tv" && <><SerieLastSeason data={data} /><hr className='mt-10 mb-14 mx-2 border-zinc-700' /></>}
           <MovieReviewsSection id={id} mediaType={mediaType} />
+          <hr className='mt-10 mb-14 mx-2 border-zinc-700' />
+          <MovieMediaSection id={id} mediaType={mediaType} />
+          <hr className='mt-10 mb-14 mx-2 border-zinc-700' />
+          <MovieSimilarSection id={id} mediaType={mediaType} />
+          <hr className='mt-10 mb-14 mx-2 border-zinc-700' />
+          <MovieRecommendations id={id} mediaType={mediaType} />
         </div>
         <div className='mt-[44px] p-4 rounded-lg shadow-2xl shadow-black bg-zinc-900'>
           <ul className="flex justify-between text-3xl gap-2 list-none">
@@ -301,7 +369,7 @@ function MovieDetailsPage({ mediaType }) {
               <>
                 <div className='mt-5'>
                   <p className='font-bold text-lg'>Network:</p>
-                  <ul className='text-sm mt-[3px]'>{data?.data?.networks?.map(network => <li className='bg-zinc-400 w-fit p-1 rounded'><Link><img src={`https://media.themoviedb.org/t/p/h30${network.logo_path}`} alt="" /></Link></li>)}</ul>
+                  <ul className='text-sm mt-[3px] flex gap-3'>{data?.data?.networks?.map(network => <li key={network.id} className='bg-zinc-400 w-fit p-1 rounded'><Link><img src={`https://media.themoviedb.org/t/p/h30${network.logo_path}`} alt="" /></Link></li>)}</ul>
                 </div>
                 <div className='mt-5'>
                   <p className='font-bold text-lg'>Type:</p>
