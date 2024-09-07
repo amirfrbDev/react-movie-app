@@ -11,7 +11,7 @@ function MovieCastSlider({ castData }) {
                     <>
                         {castData?.data?.cast?.slice(0, 10)?.map((actor) => (
                             <li key={actor.id} className='flex-shrink-0 w-[150px] h-[300px] rounded-lg shadow-xl shadow-black'>
-                                <Link>
+                                <Link to={`/person/${actor.id}`}>
                                     {
                                         actor.profile_path ? (
                                             <img
@@ -24,7 +24,7 @@ function MovieCastSlider({ castData }) {
                                         )
                                     }
                                 </Link>
-                                <Link>
+                                <Link  to={`/person/${actor.id}`}>
                                     <p className='font-semibold text-center mt-2 transition-colors hover:text-white/70'>{actor.name}</p>
                                 </Link>
                                 <p className='text-xs text-center text-gray-600'>{actor.character}</p>

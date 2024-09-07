@@ -1,0 +1,52 @@
+.arrowButton {
+    width: 30px;
+    height: 30px;
+    background-color: rgb(21, 94, 189);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    margin: 0 10px;
+    transition: all 0.1s;
+}
+
+.arrowButton:disabled {
+    opacity: 0.4;
+    background-color: gray;
+}
+
+.arrowButton:hover {
+    background-color: rgba(16, 50, 241, 0.856)
+}
+
+.selected {
+    min-width: 30px;
+    height: 30px;
+    padding: 4px 7px;
+    background-color: rgb(21, 94, 189);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    font-weight: 900;
+
+}
+
+.notSelected {
+    min-width: 30px;
+    height: 30px;
+    padding: 4px 7px;
+    background-color: transparent;
+    border: 1px solid white;
+    /* margin: 0 10px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+
+.notSelected:hover {
+    background-color: rgba(255, 255, 255, 0.082);
+}

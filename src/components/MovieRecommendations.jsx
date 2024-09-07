@@ -23,11 +23,11 @@ function MovieRecommendations({ id, mediaType }) {
                                 <img src={`https://media.themoviedb.org/t/p/w250_and_h141_face${movie.poster_path}`} className='w-full h-full rounded-lg object-cover' />
 
                             </div>
-                            <div className='absolute bottom-0 w-full p-1 pl-2 shadow-md shadow-black bg-zinc-800/70 rounded-b-lg transition-all group-hover:bg-zinc-800/90'>
-                                <div>
-                                    <Link className='font-semibold'>{movie.name || movie.original_name || movie.orignial_title}</Link>
+                            <div className='absolute bottom-0 w-full p-1 pl-2 shadow-md shadow-black bg-zinc-800/70 rounded-b-lg  text-ellipsis overflow-hidden whitespace-nowrap transition-all group-hover:bg-zinc-800/90'>
+                                
+                                    <Link className='font-semibold whitespace-nowrap '>{movie.name || movie.title} {(movie.title !== movie.original_title) || movie.name !== movie.original_name ? `(${movie.original_name || movie.original_title})` : null}</Link>
 
-                                </div>
+                               
                             </div>
 
                         </li>
