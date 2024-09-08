@@ -1,42 +1,118 @@
 import { useQuery } from '@tanstack/react-query'
-import React, { useEffect, useState } from 'react'
-import { getPopularMoviesByPage } from '../services/allMovies'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { getLanguages, getPopularMoviesByPage } from '../services/allMovies'
 import { Link, useSearchParams } from 'react-router-dom'
 import { IoIosArrowBack, IoIosArrowDown, IoIosArrowForward } from 'react-icons/io'
 
-import styles from "./PopularMovies.module.css"
+
 import { FaFilm } from 'react-icons/fa'
+import { createQueryObject } from '../helpers/helper'
+import Pagination from '../components/Pagination'
+import { getMoviesGenres } from '../services/genres'
+import FilterSidebar from '../components/FilterSidebar'
 
-function PopularMoviesPage() {
+function PopularMoviesPage({mediaType}) {
+    console.log(mediaType)
 
-    const [page, setPage] = useState(1)
-    const [query, setQuery] = useState({})
-    const [isSortMenuOpen, setIsSortMenuOpen] = useState(false)
-    const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
-    const [sortValue, setSortValue] = useState("popularity.asc")
+    const nextSixMonth = useCallback(() => new Date(new Date().setMonth(new Date().getMonth() + 6)).toLocaleDateString("en-GB", { year: "numeric", month: "numeric", day: 'numeric' }).split("/").reverse().join("-"), [],)
 
     const [searchParams, setSearchParams] = useSearchParams()
 
-    const nextSixMonth = () => {
-        return new Date(new Date().setMonth(new Date().getMonth() + 6)).toLocaleDateString("en-GB", { year: "numeric", month: "numeric", day: 'numeric' }).split("/").reverse().join("-");
-    }
+    const [page, setPage] = useState(Number(searchParams.get("page")) || 1)
 
-    const { isFetching, data: popMovieData } = useQuery({
-        queryKey: ["movies-popular", page, sortValue, nextSixMonth()],
-        queryFn: getPopularMoviesByPage
+
+
+    const [sortValue, setSortValue] = useState(searchParams.get("sortBy") || "popularity.desc");
+    const [filters, setFilters] = useState({
+        show_me: "everything",
+        "release_date.gte": "",
+        "release_date.lte": nextSixMonth(),
+        "with_genres": [],
+        "should_have_all_genres": false,
+        "with_original_language": null
     })
 
-    // console.log(popMovieData);
+    const [showSearchButton, setShowSearchButton] = useState(false)
 
-    const pageHandler = (event) => {
-        console.log(event.currentTarget)
-        setPage(+event.currentTarget.innerText);
-        setQuery(prevQueries => ({ ...prevQueries, page }))
+    const { isPending, data: popMovieData, refetch } = useQuery({
+        queryKey: ["movies-popular", page, sortValue, filters],
+        queryFn: getPopularMoviesByPage,
+        enabled: !showSearchButton
+    });
+
+    const { data: genresData } = useQuery({
+        queryKey: ["movies-genres"],
+        queryFn: getMoviesGenres
+    })
+
+    
+
+
+    const pageHandler = (page) => {
+        setPage(page);
+        setSearchParams(createQueryObject(searchParams, { page })); 
+        refetch(); // Refetch data when page changes
+    }
+    
+
+    const sortHandler = useCallback((event) => {
+        setSortValue(event.target.value)
+        setPage(1)
+        setSearchParams(createQueryObject(searchParams, { sortBy: event.target.value }))
+        setShowSearchButton(true)
+    }, [])
+
+    const filterHandler = useCallback((event) => {
+        setPage(1)
+        setShowSearchButton(true)
+
+
+        const name = event.target.name;
+        const value = event.target.value;
+
+        const genreId = event.target.dataset.genreId;
+
+
+        if (name === "show_me") {
+            setFilters(filters => ({ ...filters, show_me: event.target.dataset.showMe }))
+        } else if (name.includes("release_date")) {
+            console.log(name, event.target.value)
+            setFilters(filters => ({ ...filters, [name]: event.target.value }))
+        } else if (name === "with_genres") {
+            setFilters(prevFilters => {
+                let updatedGenres = prevFilters.with_genres.includes(genreId) ?
+                    prevFilters.with_genres.filter(genre => genre !== genreId) :
+                    [...prevFilters.with_genres, genreId];
+                console.log(updatedGenres)
+                return { ...prevFilters, with_genres: updatedGenres }
+
+            })
+            console.log(event.target.dataset.genreId)
+        } else if (name === "with_original_language") {
+            if (value === "-") return
+            setFilters(prevFilters => ({ ...prevFilters, [name]: value }))
+            console.log(value)
+        }
+    }, [])
+
+    const searchHandler = () => {
+        refetch()
+        setShowSearchButton(false)
     }
 
+
+
     useEffect(() => {
-        console.log(sortValue)
-    }, [sortValue])
+        const pageParam = Number(searchParams.get("page")) || 1;
+        if (page !== pageParam) {
+            setPage(pageParam);
+        }
+        const sortByParam = searchParams.get("sortBy") || "popularity.desc";
+        if (sortValue !== sortByParam) {
+            setSortValue(sortByParam);
+        }
+    }, [searchParams, page, sortValue]);
+
 
 
 
@@ -44,38 +120,16 @@ function PopularMoviesPage() {
         <div className='relative w-full pt-[48px] text-white/100 text-3xl'>
             <div className='pt-8 w-[93%] mx-auto'>
                 <h2>Popular Movies</h2>
-                <div className=' mx-auto grid grid-cols-[25%,73%] gap-6 pt-6'>
-                    <div className={`w-full shadow-lg shadow-black p-3 pl-5 rounded-lg`}>
-                        <div>
-                            <div className={`flex items-center text-xl gap-1 bg-zinc-800 p-3 rounded-xl cursor-pointer ${isSortMenuOpen && "rounded-b-none"}`}>
-                                <h2 className=''>Sort</h2>
-                                <span onClick={() => setIsSortMenuOpen(state => !state)}>
-                                    {
-                                        isSortMenuOpen ? <IoIosArrowDown /> : <IoIosArrowForward />
-                                    }
-                                </span>
-                            </div>
-                            {
-                                isSortMenuOpen ? (
-                                    <div className="bg-zinc-800">
-                                        <p>Sort Results By</p>
-                                        <select onChange={(e) => setSortValue(e.target.value)}>
-                                            <option value="popularity.desc">Popularity Descending</option>
-                                            <option value="popularity.asc">Popularity Ascending</option>
-                                            <option value="vote_count.desc">Ratings Count Descending</option>
-                                            <option value="vote_count.asc">Ratings Count Ascending</option>
-                                            <option value="primary_release_date.desc">Release Date Descending</option>
-                                            <option value="primary_release_date.asc">Release Date Ascending</option>
-                                            <option value="title.asc">Title (A-Z)</option>
-                                            <option value="title.desc ">Title (Z-A)</option>
-                                        </select>
-                                    </div>
-                                ) : null
-                            }
-                        </div>
-                        <div></div>
-
-                    </div>
+                <div className=' mx-auto grid grid-cols-[30%,67%] gap-6 pt-6'>
+                    <FilterSidebar 
+                        showSearchButton={showSearchButton}
+                        searchHandler={searchHandler}
+                        sortValue={sortValue}
+                        sortHandler={sortHandler}
+                        filterHandler={filterHandler}
+                        filters={filters}
+                        genresData={genresData}
+                    />
                     <div>
                         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {
@@ -88,6 +142,7 @@ function PopularMoviesPage() {
                                                         src={`https://media.themoviedb.org/t/p/w220_and_h330_face${movie.poster_path}`}
                                                         alt={movie.title}
                                                         className="w-full h-full object-cover rounded-t-lg hover:brightness-110"
+                                                        loading='lazy'
                                                     />
                                                 ) : (
                                                     <div className='w-full h-full flex items-center justify-center bg-gray-200 rounded-t-lg'>
@@ -113,32 +168,12 @@ function PopularMoviesPage() {
 
 
                         {
-                            isFetching ? null : (
-                                <div className='flex justify-center mt-10 items-center text-sm gap-4 w-full'>
-                                    <button className={styles.arrowButton} onClick={() => setPage(page => page - 1)} disabled={page === 1}>
-                                        <IoIosArrowBack className='mx-auto' />
-                                    </button>
-                                    <button className={page === 1 ? styles.selected : styles.notSelected} onClick={pageHandler}>1</button>
-                                    <button className={page === 2 ? styles.selected : styles.notSelected} onClick={pageHandler}>2</button>
-                                    <span className={styles.notSelected} id='dots'>...</span>
-                                    {
-                                        page > 3 && page < 499 && (
-                                            <>
-
-                                                <button className={page === popMovieData?.data?.page ? styles.selected : styles.notSelected} onClick={pageHandler}>
-                                                    {page}
-                                                </button>
-                                                <span className={styles.notSelected} id='dots'>...</span>
-                                            </>
-                                        )
-                                    }
-                                    <button className={page === 499 ? styles.selected : styles.notSelected} onClick={pageHandler}>499</button>
-                                    <button className={page === 500 ? styles.selected : styles.notSelected} onClick={pageHandler}>500</button>
-                                    <button className={styles.arrowButton} onClick={() => setPage(page => page + 1)} disabled={page === 500}>
-                                        <IoIosArrowForward className=' mx-auto' />
-                                        
-                                    </button>
-                                </div>
+                             (
+                                <Pagination
+                                    currentPage={page}
+                                    totalPages={popMovieData?.data?.total_pages > 500 ? 500 : popMovieData?.data?.total_pages}
+                                    onPageChange={pageHandler}
+                                />
                             )
                         }
                     </div>

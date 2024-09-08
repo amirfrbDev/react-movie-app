@@ -59,6 +59,20 @@ function PersonDetailsPage() {
         window.scroll(0, 0)
     }, [location])
 
+    const returnAgeByBirthdate = (birthdate) => {
+        const today = new Date();
+        const birth = new Date(birthdate)
+
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+
+        return age
+    }
+
     return (
         <div className='relative w-full pt-[48px] text-white/100 text-3xl'>
             <div className='w-[95%] mx-auto grid grid-cols-[24%,70%] pt-12 gap-7'>
@@ -86,7 +100,7 @@ function PersonDetailsPage() {
                             </div>
                             <div className='my-5'>
                                 <p className='text-lg font-semibold'>Birthdate</p>
-                                <p className='text-sm font-thin mt-1'>{(new Date(detailsData?.data?.birthday).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric' }))}</p>
+                                <p className='text-sm font-thin mt-1'>{(new Date(detailsData?.data?.birthday).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric' }))} ({returnAgeByBirthdate(detailsData?.data?.birthday)})</p>
                             </div>
                             <div className='my-5'>
                                 <p className='text-lg font-semibold'>Date Of Birth</p>
@@ -119,7 +133,7 @@ function PersonDetailsPage() {
                                     </button>
                                 </>
                             ) : <p className='font-thin'>{detailsData?.data?.biography}</p>
-                        }
+                            }
                         </div>
                     </div>
                     <div className='mt-8'>
@@ -137,7 +151,7 @@ function PersonDetailsPage() {
                         <h2 className='text-xl font-semibold '>Popular Tv Shows</h2>
                         <ul className='flex gap-3 overflow-x-scroll mt-3'>
                             {tvCreditsData?.data?.cast?.slice(0, 8)?.map(movie => (
-                                <Link to={`/tv/${movie.id}`} className='flex flex-col items-center gap-2 text-center'  style={{ width: "130px", minWidth: "130px" }}>
+                                <Link to={`/tv/${movie.id}`} className='flex flex-col items-center gap-2 text-center' style={{ width: "130px", minWidth: "130px" }}>
                                     <img src={`https://media.themoviedb.org/t/p/w150_and_h225_bestv2${movie.poster_path}`} alt="" className='rounded-lg' style={{ width: "130px", minWidth: "130px", height: "195px" }} />
                                     <p className='text-sm'>{movie.title || movie.name || movie.original_title || movie.original_name}</p>
                                 </Link>

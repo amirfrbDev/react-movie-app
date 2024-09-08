@@ -30,7 +30,7 @@ function SearchBox() {
         }
       }
     },
-    retry:3,
+    retry: 3,
     enabled: false,
   });
 
@@ -56,18 +56,18 @@ function SearchBox() {
           <input
             type="text"
             placeholder='Search...'
-            className='w-full h-full rounded-full pl-5 text-white bg-white/15 transition-all focus:bg-white/35'
+            className='flex items-center w-full h-full rounded-full pl-5 text-white bg-white/15 transition-all focus:bg-white/35'
             value={input}
             onChange={e => setInput(e.target.value)}
           />
 
           {
             input &&
-            <button className='w-7 h-7 absolute right-12 top-2 text-white' onClick={() => setInput("")}>
-              <RxCross2 fontSize={30} />
+            <button className='flex justify-center items-center w-8 h-8 absolute right-12 top-[6px] text-white rounded-full transition-all hover:bg-black/30' onClick={() => setInput("")}>
+              <RxCross2 fontSize={25} />
             </button>
           }
-          <button type='submit' className='w-7 h-7 absolute right-4 top-2 text-white'>
+          <button type='submit' className='flex justify-center items-center w-9 h-9 absolute right-3 top-1 text-white rounded-full transition-all hover:bg-black/30 '>
             <CiSearch fontSize={30} />
           </button>
         </div>

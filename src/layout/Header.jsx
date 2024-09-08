@@ -25,13 +25,13 @@ function Header() {
 
                             <ul className="absolute left-0 w-48 p-2  space-y-2 bg-white text-black rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 invisible group-hover:visible">
                                 <li>
-                                    <Link to="/movie" className="block px-4 py-2 hover:bg-gray-100">Popular</Link>
+                                    <Link to="/movie" className="block px-4 py-2 transition-all hover:bg-gray-200">Popular</Link>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Up Coming</a>
+                                    <a href="#" className="block px-4 py-2 transition-all hover:bg-gray-200">Up Coming</a>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Top Rated</a>
+                                    <Link to={`movie?sortBy=vote_count.desc`} className="block px-4 py-2 transition-all hover:bg-gray-200">Top Rated</Link>
                                 </li>
                             </ul>
                         </li>
@@ -44,13 +44,13 @@ function Header() {
 
                             <ul className="absolute left-0 w-48 p-2  space-y-2 bg-white text-black rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 invisible group-hover:visible">
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Top Rated</a>
+                                    <Link to={`/tv`} className="block px-4 py-2 transition-all hover:bg-gray-200">Popular</Link>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">On Air</a>
+                                    <a href="#" className="block px-4 py-2 transition-all hover:bg-gray-200">On Air</a>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Popular</a>
+                                    <a href="#" className="block px-4 py-2 transition-all hover:bg-gray-200">Popular</a>
                                 </li>
                             </ul>
                         </li>
@@ -64,13 +64,13 @@ function Header() {
 
                             <ul className="absolute left-0 w-48 p-2  bg-white text-black rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 invisible group-hover:visible">
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Genres</a>
+                                    <a href="#" className="block px-4 py-2 transition-all hover:bg-gray-200">Genres</a>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Actors</a>
+                                    <a href="#" className="block px-4 py-2 transition-all hover:bg-gray-200">Actors</a>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Directors</a>
+                                    <a href="#" className="block px-4 py-2 transition-all hover:bg-gray-200">Directors</a>
                                 </li>
                             </ul>
                         </li>
