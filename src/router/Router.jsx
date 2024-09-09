@@ -12,6 +12,7 @@ function Router() {
         <Route path="/movie/:id" element={<MovieDetailsPage mediaType="movie" />} />
         <Route path='/movie' element={<PopularMoviesPage mediaType="movie" /> } />
         <Route path='/tv' element={<PopularMoviesPage mediaType="tv" /> } />
+        <Route path='/tv/airing-today' element={<PopularMoviesPage mediaType="tv" /> } />
         <Route path="/tv/:id" element={<MovieDetailsPage mediaType="tv" />} />      
         <Route path="/person/:id" element={<PersonDetailsPage />} />      
     </Routes>

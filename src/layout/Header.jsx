@@ -47,10 +47,10 @@ function Header() {
                                     <Link to={`/tv`} className="block px-4 py-2 transition-all hover:bg-gray-200">Popular</Link>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 transition-all hover:bg-gray-200">On Air</a>
+                                    <Link to={`/tv/airing-today`} className="block px-4 py-2 transition-all hover:bg-gray-200">Airing Today</Link>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 transition-all hover:bg-gray-200">Popular</a>
+                                    <Link to={`/tv?sortBy=vote_count.desc`} className="block px-4 py-2 transition-all hover:bg-gray-200">Top Rated</Link>
                                 </li>
                             </ul>
                         </li>

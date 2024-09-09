@@ -36,7 +36,7 @@ function MovieMediaSection({ id, mediaType }) {
         <div>
             <div className='flex items-baseline justify-between w-full'>
                 <div className='flex gap-10 items-baseline w-full'>
-                    <h2 className='text-2xl font-bold mb-4'>Media</h2>
+                    <h2 className='text-xl md:text-2xl font-bold mb-5  md:mt-0'>Media</h2>
                     <ul className='flex gap-4 text-xl'>
                         <li className={`${tab === "backdrops" && "border-b-4"} p-2 cursor-pointer flex gap-2`} onClick={tabHandler} data-tab="backdrops">
                             <p>Backdrops</p>

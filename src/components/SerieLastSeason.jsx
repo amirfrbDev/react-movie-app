@@ -9,7 +9,7 @@ function SerieLastSeason({ data }) {
     return (
         <>
             <div className='w-full'>
-                <h2 className='text-2xl font-bold mb-4'>{data?.data?.status === "Returning Series" ? "Current Season" : "Last Season"}</h2>
+                <h2 className='text-xl md:text-2xl font-bold mb-5 mt-8 md:mt-0'>{data?.data?.status === "Returning Series" ? "Current Season" : "Last Season"}</h2>
                 <div className='flex shadow-2xl shadow-black rounded-lg gap-5 pr-8  text-justify'>
                     <Link className='flex flex-shrink-0' style={{ width: "130px", height: "195px" }}>
                         {

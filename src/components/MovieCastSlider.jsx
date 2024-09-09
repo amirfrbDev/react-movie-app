@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
 import { FaArrowRight, FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 function MovieCastSlider({ castData }) {
+
     return (
         <div className='w-full rounded-lg '>
-            <h2 className='text-2xl font-bold mb-4'>Top Billed Cast</h2>
-            <ul className='flex overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400 h-fit  gap-4 p-3 pl-2 shadow-inner shadow-black rounded-lg' id='chos'>
+            <h2 className='text-xl md:text-2xl font-bold mb-5 mt-8 md:mt-0'>Top Billed Cast</h2>
+            <ul className='flex overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400 h-fit  gap-4 md:p-3 pl-2  shadow-inner shadow-black rounded-lg' id='chos'>
                 {castData?.data?.cast?.length ? (
                     <>
                         {castData?.data?.cast?.slice(0, 10)?.map((actor) => (
-                            <li key={actor.id} className='flex-shrink-0 w-[150px] h-[300px] rounded-lg shadow-xl shadow-black'>
+                            <li key={actor.id} className='flex-shrink-0 w-[130px] md:w-[150px] h-[290px] md:h-[300px] rounded-lg shadow-xl shadow-black'>
                                 <Link to={`/person/${actor.id}`}>
                                     {
                                         actor.profile_path ? (
@@ -24,7 +24,7 @@ function MovieCastSlider({ castData }) {
                                         )
                                     }
                                 </Link>
-                                <Link  to={`/person/${actor.id}`}>
+                                <Link to={`/person/${actor.id}`}>
                                     <p className='font-semibold text-center mt-2 transition-colors hover:text-white/70'>{actor.name}</p>
                                 </Link>
                                 <p className='text-xs text-center text-gray-600'>{actor.character}</p>
@@ -39,7 +39,7 @@ function MovieCastSlider({ castData }) {
 
             </ul>
             <Link to="#" className='w-fit min-w-0 flex transition-all underline hover:text-white/70'>
-                <h2 className='text-lg mt-4 w-fit'>Full Cast & Crew</h2>
+                <h2 className='text-sm md:text-lg mt-4 w-fit'>Full Cast & Crew</h2>
             </Link>
         </div >
     );

@@ -14,7 +14,7 @@ function MovieRecommendations({ id, mediaType }) {
 
     return (
         <div>
-            <h2 className='text-2xl font-bold mb-4'>Recommended For You</h2>
+            <h2 className='text-xl md:text-2xl font-bold mb-5 mt-8 md:mt-0'>Recommended For You</h2>
             <ul className='flex gap-5 rounded-lg overflow-x-scroll p-2 shadow-inner shadow-black'>
                 {recommendData?.data?.results?.map(movie => (
                     <Link to={`/${movie.media_type}/${movie.id}`} className='w-full h-full rounded-lg'>

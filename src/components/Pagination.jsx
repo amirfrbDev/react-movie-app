@@ -56,7 +56,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                     <span key={index} className={styles.notSelected}>...</span>
                 ) : (
                     <button
-                        key={page}
+                        key={index}
                         className={page === currentPage ? styles.selected : styles.notSelected}
                         onClick={() => onPageChange(page)}
                     >

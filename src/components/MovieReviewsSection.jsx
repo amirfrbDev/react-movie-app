@@ -4,11 +4,10 @@ import { getMovieReviewsById } from '../services/movie';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
-import "./MovieReviewsSection.css";
 import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle, IoIosCheckmarkCircle } from 'react-icons/io';
 
 function MovieReviewsSection({ id, mediaType }) {
-    const [reviewIndex, setReviewIndex] = useState(0); // Initialize to 0 to match array indexing
+    const [reviewIndex, setReviewIndex] = useState(0);
     const [reviews, setReviews] = useState(null);
     const [currentReview, setCurrentReview] = useState(null);
     const [showIndexInputBtn, setShowIndexInputBtn] = useState(false);
@@ -25,24 +24,20 @@ function MovieReviewsSection({ id, mediaType }) {
         },
     });
 
-    // Update reviews when reviewsData changes
     useEffect(() => {
-        setReviews(reviewsData?.data?.results || []); // Default to empty array if no data
+        setReviews(reviewsData?.data?.results || []);
     }, [reviewsData]);
 
-    // Update currentReview when reviews or reviewIndex changes
     useEffect(() => {
         if (reviews && reviews.length > 0) {
             setCurrentReview(reviews[reviewIndex]);
         }
     }, [reviews, reviewIndex]);
 
-    // Set the input index to the current review index
     useEffect(() => {
         setIndexInput(reviewIndex + 1);
     }, [reviewIndex]);
 
-    // Handle index change from input
     const handleIndexChange = () => {
         const newIndex = parseInt(indexInput, 10) - 1;
         if (newIndex >= 0 && newIndex < reviews.length) {
@@ -51,7 +46,6 @@ function MovieReviewsSection({ id, mediaType }) {
         }
     };
 
-    // Function to truncate review content
     const truncateContent = (content, wordLimit) => {
         const words = content.split(" ");
         return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + '...' : content;
@@ -61,12 +55,11 @@ function MovieReviewsSection({ id, mediaType }) {
 
     return (
         <div className='mt-10'>
-            <h1 className='text-2xl font-bold mb-4'>Social</h1>
+            <h1 className='text-xl md:text-2xl font-bold mb-5 mt-8 md:mt-0'>Social</h1>
             {reviews?.length ? (
                 <>
                     {currentReview ? (
                         <div className='flex flex-col p-4 pb-6 shadow-black shadow-xl rounded-lg'>
-                            {/* Example content */}
                             <div className='flex justify-between items-center'>
                                 <button
                                     className='m-2 disabled:text-white/20'
@@ -75,18 +68,18 @@ function MovieReviewsSection({ id, mediaType }) {
                                 >
                                     <IoIosArrowDropleftCircle fontSize={30} />
                                 </button>
-                                <div className='flex gap-3 items-center ml-5'>
+                                <div className='flex gap-3 items-center'>
                                     <p className='text-sm'>
                                         <input
                                             type="number"
                                             min="1"
                                             max={reviewsData?.data?.total_results || 1}
                                             value={indexInput}
-                                            className='w-8 text-center bg-white/20 mr-1 rounded focus:outline-none'
+                                            className='w-8 text-center bg-white/20 rounded focus:outline-none'
                                             onChange={e => setIndexInput(e.target.value)}
                                             onKeyDown={(e) => e.key === 'Enter' && handleIndexChange()}
                                         />
-                                        /<span className='ml-1'>{reviewsData?.data?.total_results}</span>
+                                        /<span>{reviewsData?.data?.total_results}</span>
                                     </p>
                                     {showIndexInputBtn && (
                                         <button onClick={handleIndexChange}>
@@ -102,28 +95,27 @@ function MovieReviewsSection({ id, mediaType }) {
                                     <IoIosArrowDroprightCircle fontSize={30} />
                                 </button>
                             </div>
-                            <div className='mt-4 ml-3 px-4'>
-                                <div className='flex items-center gap-3'>
+                            <div className='mt-4 px-4'>
+                                <div className='flex flex-col sm:flex-row items-center sm:gap-3'>
                                     <Link>
                                         {currentReview?.author_details?.avatar_path ? (
                                             <img
                                                 src={`https://media.themoviedb.org/t/p/w45_and_h45_face${currentReview?.author_details?.avatar_path}`}
-                                                className='rounded-full'
+                                                className='rounded-full object-cover'
                                                 style={{ width: "60px", height: "60px" }}
                                             />
                                         ) : (
                                             <div
                                                 className='rounded-full flex items-center justify-center text-3xl bg-red-900'
                                                 style={{ width: "50px", height: "50px" }}
-                                                id='review_author_logo'
                                             >
                                                 {currentReview?.author?.toUpperCase()[0]}
                                             </div>
                                         )}
                                     </Link>
-                                    <div className='w-fit'>
+                                    <div className='mt-3 sm:mt-0 sm:ml-3'>
                                         <a href='#' className='transition-all hover:text-white/80'>
-                                            <h2 className='text-lg w-fit inline'>
+                                            <h2 className='text-lg'>
                                                 A review by <span className='font-bold'>{currentReview.author}</span>
                                             </h2>
                                         </a>
@@ -136,7 +128,7 @@ function MovieReviewsSection({ id, mediaType }) {
                                         </p>
                                     </div>
                                 </div>
-                                <div className='mt-5' id='review_body'>
+                                <div className='mt-5'>
                                     <ReactMarkdown>{truncatedContent}</ReactMarkdown>
                                     <Link to={`/reviews/${currentReview.id}`} className='underline ml-2'>
                                         Read More

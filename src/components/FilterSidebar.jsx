@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query';
 
 import { getLanguages } from '../services/allMovies';
@@ -33,6 +33,10 @@ function FilterSidebar({
             return 0;                    // a and b are equal
         });
     }
+
+    useEffect(()=>{
+        console.log(filters)
+    },[filters])
 
     return (
         <div className={`w-full `}>

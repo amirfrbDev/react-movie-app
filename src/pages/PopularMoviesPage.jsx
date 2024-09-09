@@ -1,18 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { getLanguages, getPopularMoviesByPage } from '../services/allMovies'
-import { Link, useSearchParams } from 'react-router-dom'
-import { IoIosArrowBack, IoIosArrowDown, IoIosArrowForward } from 'react-icons/io'
+import React, { useCallback, useEffect, useState } from 'react'
+import { getPopularMoviesByPage, getPopularTvsByPage } from '../services/allMovies'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 
 
 import { FaFilm } from 'react-icons/fa'
 import { createQueryObject } from '../helpers/helper'
 import Pagination from '../components/Pagination'
-import { getMoviesGenres } from '../services/genres'
+import { getMoviesGenres, getTvGenres } from '../services/genres'
 import FilterSidebar from '../components/FilterSidebar'
 
-function PopularMoviesPage({mediaType}) {
-    console.log(mediaType)
+function PopularMoviesPage({ mediaType }) {
 
     const nextSixMonth = useCallback(() => new Date(new Date().setMonth(new Date().getMonth() + 6)).toLocaleDateString("en-GB", { year: "numeric", month: "numeric", day: 'numeric' }).split("/").reverse().join("-"), [],)
 
@@ -27,6 +25,8 @@ function PopularMoviesPage({mediaType}) {
         show_me: "everything",
         "release_date.gte": "",
         "release_date.lte": nextSixMonth(),
+        "air_date.gte": "",
+        "air_date.lte": nextSixMonth(),
         "with_genres": [],
         "should_have_all_genres": false,
         "with_original_language": null
@@ -34,26 +34,28 @@ function PopularMoviesPage({mediaType}) {
 
     const [showSearchButton, setShowSearchButton] = useState(false)
 
+    const location = useLocation();
+
     const { isPending, data: popMovieData, refetch } = useQuery({
         queryKey: ["movies-popular", page, sortValue, filters],
-        queryFn: getPopularMoviesByPage,
+        queryFn: mediaType === "tv" ? getPopularTvsByPage : getPopularMoviesByPage,
         enabled: !showSearchButton
     });
 
     const { data: genresData } = useQuery({
         queryKey: ["movies-genres"],
-        queryFn: getMoviesGenres
+        queryFn: mediaType === "tv" ? getTvGenres : getMoviesGenres
     })
 
-    
+
 
 
     const pageHandler = (page) => {
         setPage(page);
-        setSearchParams(createQueryObject(searchParams, { page })); 
+        setSearchParams(createQueryObject(searchParams, { page }));
         refetch(); // Refetch data when page changes
     }
-    
+
 
     const sortHandler = useCallback((event) => {
         setSortValue(event.target.value)
@@ -65,7 +67,6 @@ function PopularMoviesPage({mediaType}) {
     const filterHandler = useCallback((event) => {
         setPage(1)
         setShowSearchButton(true)
-
 
         const name = event.target.name;
         const value = event.target.value;
@@ -114,14 +115,29 @@ function PopularMoviesPage({mediaType}) {
     }, [searchParams, page, sortValue]);
 
 
+    const formattedTodayDate = new Date().toISOString().split("T")[0]
 
+    useEffect(() => {
+        if (location.pathname.split("/")[2] === "airing-today" && mediaType === "tv") {
+            setFilters(prevFilters => (
+                { ...prevFilters, "air_date.gte": formattedTodayDate, "air_date.lte": formattedTodayDate }
+            ))
+        } else {
+            setFilters(prevFilters => (
+                {...prevFilters, "air_date.gte": null, "air_date.lte":nextSixMonth()}
+            ))
+        }
+        refetch()
+    }, [location.pathname, formattedTodayDate, mediaType])
+
+    
 
     return (
         <div className='relative w-full pt-[48px] text-white/100 text-3xl'>
             <div className='pt-8 w-[93%] mx-auto'>
-                <h2>Popular Movies</h2>
+                <h2>Popular {mediaType === "movie" ? "Movies" : "Tv Shows"}</h2>
                 <div className=' mx-auto grid grid-cols-[30%,67%] gap-6 pt-6'>
-                    <FilterSidebar 
+                    <FilterSidebar
                         showSearchButton={showSearchButton}
                         searchHandler={searchHandler}
                         sortValue={sortValue}
@@ -131,11 +147,11 @@ function PopularMoviesPage({mediaType}) {
                         genresData={genresData}
                     />
                     <div>
-                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-screen">
                             {
                                 popMovieData?.data?.results?.map(movie => (
                                     <div key={movie.id} className='shadow-lg shadow-black rounded-lg'>
-                                        <Link to={`/movie/${movie.id}`}>
+                                        <Link to={`/${mediaType}/${movie.id}`}>
                                             <div className="w-full h-80 relative">
                                                 {movie.poster_path ? (
                                                     <img
@@ -152,12 +168,14 @@ function PopularMoviesPage({mediaType}) {
                                             </div>
                                         </Link>
                                         <div className="mt-2 text-center m-4">
-                                            <Link to={`/movie/${movie.id}`}>
-                                                <p className="font-semibold text-lg transition-colors hover:text-white/70">{movie.title}</p>
+                                            <Link to={`/${mediaType}/${movie.id}`}>
+                                                <p className="font-semibold text-lg transition-colors hover:text-white/70">
+                                                    {movie.title || movie.name || movie.original_title || movie.original_name}
+                                                </p>
                                             </Link>
-                                            {movie.release_date &&
+                                            {(movie.release_date || movie.first_air_date) &&
                                                 <p className='text-sm text-white/70 mt-1'>
-                                                    {new Date(movie.release_date).toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" })}
+                                                    {new Date(movie.release_date || movie.first_air_date).toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" })}
                                                 </p>
                                             }
                                         </div>
@@ -168,7 +186,7 @@ function PopularMoviesPage({mediaType}) {
 
 
                         {
-                             (
+                            (
                                 <Pagination
                                     currentPage={page}
                                     totalPages={popMovieData?.data?.total_pages > 500 ? 500 : popMovieData?.data?.total_pages}
