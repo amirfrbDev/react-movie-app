@@ -10,7 +10,7 @@ function MovieRecommendations({ id, mediaType }) {
         queryFn: getRecommendationMoviesById
     });
 
-    console.log(recommendData)
+    // console.log(recommendData)
 
     return (
         <div>

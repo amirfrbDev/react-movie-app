@@ -33,36 +33,32 @@ function MovieMediaSection({ id, mediaType }) {
     }, [location])
 
     return (
-        <div>
-            <div className='flex items-baseline justify-between w-full'>
-                <div className='flex gap-10 items-baseline w-full'>
-                    <h2 className='text-xl md:text-2xl font-bold mb-5  md:mt-0'>Media</h2>
-                    <ul className='flex gap-4 text-xl'>
-                        <li className={`${tab === "backdrops" && "border-b-4"} p-2 cursor-pointer flex gap-2`} onClick={tabHandler} data-tab="backdrops">
+        <div className=''>
+            <div className='flex items-baseline justify-between w-full '>
+                <div className='flex flex-col md:flex-row md:gap-10 items-baseline w-full min-w-full '>
+                    <h2 className='text-xl md:text-2xl font-bold mb-3 md:mb-5  md:mt-0'>Media</h2>
+                    <ul className='flex md:gap-4 text-sm justify-between sm:justify-start w-full p-1'>
+                        <li className={`${tab === "backdrops" && "border-b-2 md:border-b-4"} p-1 md:p-2 cursor-pointer flex gap-1 md:gap-2 items-center`} onClick={tabHandler} data-tab="backdrops">
                             <p>Backdrops</p>
                             {imagesData?.data?.backdrops && (
-                                <span className='bg-zinc-700 rounded-badge p-1 w-fit h-fit text-sm'>{imagesData?.data?.backdrops?.length}</span>
+                                <span className='bg-zinc-700 rounded-badge p-1 w-fit h-fit text-xs md:text-sm'>{imagesData?.data?.backdrops?.length}</span>
                             )}
                         </li>
-                        <li className={`${tab === "posters" && "border-b-4"} p-2 cursor-pointer flex gap-2`} onClick={tabHandler} data-tab="posters">
+                        <li className={`${tab === "posters" && "border-b-2 md:border-b-4"} p-1 md:p-2 cursor-pointer flex gap-1 md:gap-2 items-center`} onClick={tabHandler} data-tab="posters">
                             <p>Posters</p>
                             {imagesData?.data?.posters && (
-                                <span className='bg-zinc-700 rounded-badge p-1 w-fit h-fit text-sm'>{imagesData?.data?.posters?.length}</span>
+                                <span className='bg-zinc-700 rounded-badge p-1 w-fit h-fit text-xs md:text-sm'>{imagesData?.data?.posters?.length}</span>
                             )}
                         </li>
-                        <li className={`${tab === "videos" && "border-b-4"} p-2 cursor-pointer flex gap-2`} onClick={tabHandler} data-tab="videos">
+                        <li className={`${tab === "videos" && "border-b-2 md:border-b-4"} p-1 md:p-2 cursor-pointer flex gap-1 md:gap-2 items-center`} onClick={tabHandler} data-tab="videos">
                             <p>Videos</p>
                             {videosData?.data?.results && (
-                                <span className='bg-zinc-700 rounded-badge p-1 w-fit h-fit text-sm'>{videosData?.data?.results?.length}</span>
+                                <span className='bg-zinc-700 rounded-badge p-1 w-fit h-fit text-xs md:text-sm'>{videosData?.data?.results?.length}</span>
                             )}
                         </li>
                     </ul>
                 </div>
-                <a href='#' className='inline-block w-fit mr-2 text-blue-400 transition-all hover:text-blue-500'>
-                    <p className='inline whitespace-nowrap'>
-                        View all <span className='inline'>{tab}</span>
-                    </p>
-                </a>
+                
             </div>
 
             <ul className="flex overflow-x-scroll mt-2 overflow-y-hidden h-[318px] rounded-lg">
@@ -94,6 +90,11 @@ function MovieMediaSection({ id, mediaType }) {
                     </>
                 )}
             </ul>
+            <a href='#' className='text-xs sm:text-sm mt-2 w-fit mr-2 text-blue-400 transition-all hover:text-blue-500'>
+                <p className='inline whitespace-nowrap'>
+                    View all <span className='inline'>{tab}</span>
+                </p>
+            </a>
         </div>
     );
 }

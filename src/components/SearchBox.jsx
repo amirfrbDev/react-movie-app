@@ -7,12 +7,14 @@ import SearchItemCard from './shared/SearchItemCard';
 import useDebounce from '../hooks/useDebounce'; // Import debounce hook
 import { IoIosArrowForward, IoMdArrowDropright } from 'react-icons/io';
 import { RxCross2 } from 'react-icons/rx';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function SearchBox() {
   const [input, setInput] = useState("");
-  const debouncedInput = useDebounce(input, 300); // Use debounce with 300ms delay
+  const debouncedInput = useDebounce(input, 300);
   const [abortController, setAbortController] = useState(null);
+
+  const navigate = useNavigate()
 
   const { isFetching, data, isError, error, refetch } = useQuery({
     queryKey: ["searched-movies", debouncedInput.toLowerCase().trim()], // Use debounced input in query key
@@ -49,9 +51,17 @@ function SearchBox() {
     };
   }, [debouncedInput]);
 
+  const searchHandler = (event) => {
+    event.preventDefault()
+    navigate(`/search?query=${input}`)
+    console.log("hey")
+  }
+
+ 
+
   return (
     <div className='w-full h-screen bg-cover flex align-middle flex-col items-center -z-50' id='gooz'>
-      <form className='w-3/4 flex flex-col text-xl mt-36' onSubmit={(e) => e.preventDefault()}>
+      <form className='w-3/4 flex flex-col text-xl mt-36' onSubmit={searchHandler}>
         <div className='h-12 flex flex-col relative'>
           <input
             type="text"
@@ -63,7 +73,7 @@ function SearchBox() {
 
           {
             input &&
-            <button className='flex justify-center items-center w-8 h-8 absolute right-12 top-[6px] text-white rounded-full transition-all hover:bg-black/30' onClick={() => setInput("")}>
+            <button type='button' className='flex justify-center items-center w-8 h-8 absolute right-12 top-[6px] text-white rounded-full transition-all hover:bg-black/30' onClick={() => setInput("")}>
               <RxCross2 fontSize={25} />
             </button>
           }

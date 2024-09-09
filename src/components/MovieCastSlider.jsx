@@ -6,7 +6,7 @@ function MovieCastSlider({ castData }) {
     return (
         <div className='w-full rounded-lg '>
             <h2 className='text-xl md:text-2xl font-bold mb-5 mt-8 md:mt-0'>Top Billed Cast</h2>
-            <ul className='flex overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400 h-fit  gap-4 md:p-3 pl-2  shadow-inner shadow-black rounded-lg' id='chos'>
+            <ul className='flex overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400 h-fit  gap-4 md:p-3 pl-2 pt-2  shadow-inner shadow-black rounded-lg' id='chos'>
                 {castData?.data?.cast?.length ? (
                     <>
                         {castData?.data?.cast?.slice(0, 10)?.map((actor) => (
